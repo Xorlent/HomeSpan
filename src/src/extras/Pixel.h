@@ -390,7 +390,7 @@ class WS2801_LED {
   public:
     WS2801_LED(uint8_t dataPin, uint8_t clockPin);                                          // creates addressable two-wire LED connected to dataPin and clockPin usig the WS2801 protocol
     void set(Color *c, size_t nPixels){transmit(c,nPixels,true);}                           // sets colors of nPixels based on array of Colors c
-    void set(Color c, size_t nPixels=1){transmit(&c,nPixels,false);}                        // sets color of nPixels to be equal to specific Color c
+  //  void set(Color c, size_t nPixels=1){transmit(&c,nPixels,false);}                        // sets color of nPixels to be equal to specific Color c
     
     static Color RGB(uint8_t r, uint8_t g, uint8_t b){return(Color().RGB(r,g,b));}          // an alternative method for returning an RGB Color
     static Color HSV(float h, float s, float v){return(Color().HSV(h,s,v));}                // an alternative method for returning an HSV Color

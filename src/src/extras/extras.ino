@@ -27,21 +27,37 @@
 
 #include "Pixel.h"
 
- WS2801_LED *p;
-//WS2801_LED::Color empty[8]={};
-//WS2801_LED::Color colors[8]={WS2801_LED::RGB(0, 50, 0),  WS2801_LED::RGB(50, 50, 0), WS2801_LED::RGB(50, 0, 0) ,WS2801_LED::RGB(0, 0, 0), WS2801_LED::RGB(0, 0, 255), WS2801_LED::RGB(0,0,0), WS2801_LED::RGB(0,0,255),WS2801_LED::RGB(255,0,0)};
+WS2801_LED *p1;
+WS2801_LED *p2;
+
+WS2801_LED::Color *red;
+WS2801_LED::Color *blue;
+WS2801_LED::Color *green;
 
 void setup() {
 
   Serial.begin(115200);
   delay(2000);
   Serial.printf("\n\nReady %d %d\n",F14,F22);
-  p=new WS2801_LED(F14, F22);
+
+  p1=new WS2801_LED(F14, F22);
+  p2=new WS2801_LED(F27, F23);
+
+  red=(WS2801_LED::Color *)heap_caps_calloc(25,sizeof(WS2801_LED::Color),MALLOC_CAP_DMA);   
+  blue=(WS2801_LED::Color *)heap_caps_calloc(25,sizeof(WS2801_LED::Color),MALLOC_CAP_DMA);   
+  green=(WS2801_LED::Color *)heap_caps_calloc(25,sizeof(WS2801_LED::Color),MALLOC_CAP_DMA);   
+  for(int i=0;i<25;i++){
+    red[i].RGB(255,0,0);
+    blue[i].RGB(0,0,255);
+    green[i].RGB(0,128,0);
+  }
 }
 
 void loop() {
-  p->set(WS2801_LED::RGB(255,0,0),25);
+  p1->set(red,25);
+  p2->set(green,25);
   delay(1000);
-  p->set(WS2801_LED::RGB(0,0,255),25);
+  p1->set(blue,25);
+  p2->set(green,25);
   delay(1000);    
 }
