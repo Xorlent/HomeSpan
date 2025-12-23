@@ -254,6 +254,22 @@ WS2801_LED::WS2801_LED(uint8_t dataPin, uint8_t clockPin){
   devcfg.clock_speed_hz = 2 * 1000 * 1000;
   devcfg.spics_io_num = -1;
   devcfg.queue_size=1;
+
+  #if defined(CONFIG_IDF_TARGET_ESP32)
+    setSPI(SPI2_HOST);
+  #elif defined(CONFIG_IDF_TARGET_ESP32S2) || defined(CONFIG_IDF_TARGET_ESP32S3)
+    setSPI(SPI3_HOST);
+  #else
+    setSPI(SPI2_HOST);
+  #endif  
+}
+
+///////////////////
+
+void WS2801_LED::setSPI(spi_host_device_t host){
+  
+  if(host!=SPI1_HOST)
+    spiHost=host;
 }
 
 ///////////////////
@@ -263,15 +279,17 @@ void WS2801_LED::transmit(Color *c, size_t nPixels, boolean multiColor){
   if(nPixels==0)
     return;
   
-  spi_bus_initialize(SPI2_HOST, &buscfg, SPI_DMA_CH_AUTO);
+  spi_bus_initialize(spiHost, &buscfg, SPI_DMA_CH_AUTO);
   delay(1);
-  spi_bus_add_device(SPI2_HOST, &devcfg, &spi);
+  spi_bus_add_device(spiHost, &devcfg, &spi);
   trans.length=nPixels*24;
   trans.tx_buffer=c;
   spi_device_transmit(spi,&trans);
   spi_bus_remove_device(spi);
-  spi_bus_free(SPI2_HOST);
+  spi_bus_free(spiHost);
   return;
 }
 
 ////////////////////////////////////////////
+
+spi_host_device_t WS2801_LED::spiHost;

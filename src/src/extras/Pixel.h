@@ -381,6 +381,7 @@ class WS2801_LED {
       .intr_flags = 0
     };
 
+    static spi_host_device_t spiHost;
     spi_device_interface_config_t devcfg = {};
     spi_transaction_t trans = {};
     spi_device_handle_t spi;
@@ -391,6 +392,7 @@ class WS2801_LED {
     WS2801_LED(uint8_t dataPin, uint8_t clockPin);                                          // creates addressable two-wire LED connected to dataPin and clockPin usig the WS2801 protocol
     void set(Color *c, size_t nPixels){transmit(c,nPixels,true);}                           // sets colors of nPixels based on array of Colors c
   //  void set(Color c, size_t nPixels=1){transmit(&c,nPixels,false);}                        // sets color of nPixels to be equal to specific Color c
+    static void setSPI(spi_host_device_t host);
     
     static Color RGB(uint8_t r, uint8_t g, uint8_t b){return(Color().RGB(r,g,b));}          // an alternative method for returning an RGB Color
     static Color HSV(float h, float s, float v){return(Color().HSV(h,s,v));}                // an alternative method for returning an HSV Color

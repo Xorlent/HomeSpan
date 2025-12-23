@@ -43,6 +43,8 @@ void setup() {
   p1=new WS2801_LED(F14, F22);
   p2=new WS2801_LED(F27, F23);
 
+  p1->setSPI(SPI3_HOST);
+
   red=(WS2801_LED::Color *)heap_caps_calloc(25,sizeof(WS2801_LED::Color),MALLOC_CAP_DMA);   
   blue=(WS2801_LED::Color *)heap_caps_calloc(25,sizeof(WS2801_LED::Color),MALLOC_CAP_DMA);   
   green=(WS2801_LED::Color *)heap_caps_calloc(25,sizeof(WS2801_LED::Color),MALLOC_CAP_DMA);   
