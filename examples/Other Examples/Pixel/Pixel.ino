@@ -27,7 +27,7 @@
  
 // HomeSpan Addressable RGB LED Examples.  Demonstrates use of:
 //
-//  * HomeSpan Pixel Class that provides for control of single-wire addressable RGB and RGBW LEDs, such as the WS2812 and SK6812
+//  * HomeSpan Pixel Class that provides for control of single-wire addressable RGB RGBW, and RGBWC LEDs, such as the WS2812 and SK6812
 //  * HomeSpan Dot Class that provides for control of two-wire addressable RGB LEDs, such as the APA102 and SK9822
 //
 
@@ -37,6 +37,8 @@
   #define NEOPIXEL_RGBW_PIN      32
   #define DOTSTAR_DATA_PIN       33
   #define DOTSTAR_CLOCK_PIN      27
+  #define WS2801_DATA_PIN        14
+  #define WS2801_CLOCK_PIN       22
   
 #else
 
@@ -44,6 +46,8 @@
   #define NEOPIXEL_RGBW_PIN      F32
   #define DOTSTAR_DATA_PIN       F33
   #define DOTSTAR_CLOCK_PIN      F27
+  #define WS2801_DATA_PIN        F14
+  #define WS2801_CLOCK_PIN       F22
   
 #endif
 
@@ -51,7 +55,7 @@
 
 ///////////////////////////////
 
-struct NeoPixel_RGB : Service::LightBulb {      // Addressable single-wire RGB LED Strand (e.g. NeoPixel)
+struct NeoPixel_RGB : Service::LightBulb {      // Addressable single-wire RGB NeoPixel LED Strand
  
   Characteristic::On power{0,true};
   Characteristic::Hue H{0,true};
@@ -86,7 +90,7 @@ struct NeoPixel_RGB : Service::LightBulb {      // Addressable single-wire RGB L
 
 ///////////////////////////////
 
-struct NeoPixel_RGBW : Service::LightBulb {      // Addressable single-wire RGBW LED Strand (e.g. NeoPixel)
+struct NeoPixel_RGBW : Service::LightBulb {      // Addressable single-wire RGBW NeoPixel LED Strand
  
   Characteristic::On power{0,true};
   Characteristic::Brightness V{100,true};
@@ -121,7 +125,7 @@ struct NeoPixel_RGBW : Service::LightBulb {      // Addressable single-wire RGBW
 
 ///////////////////////////////
 
-struct DotStar_RGB : Service::LightBulb {      // Addressable two-wire RGB LED Strand (e.g. DotStar)
+struct DotStar_RGB : Service::LightBulb {      // Addressable two-wire RGB DotStar LED Strand
  
   Characteristic::On power{0,true};
   Characteristic::Hue H{0,true};
@@ -161,9 +165,51 @@ struct DotStar_RGB : Service::LightBulb {      // Addressable two-wire RGB LED S
 
 ///////////////////////////////
 
+struct WS2801_RGB : Service::LightBulb {      // Addressable two-wire RGB WS2801 LED Strand
+ 
+  Characteristic::On power{0,true};
+  Characteristic::Hue H{0,true};
+  Characteristic::Saturation S{0,true};
+  Characteristic::Brightness V{100,true};
+  WS2801_LED *pixel;
+  WS2801_LED::Color *colors;
+  int nPixels;
+  
+  WS2801_RGB(uint8_t dataPin, uint8_t clockPin, int nPixels) : Service::LightBulb(){
+
+    V.setRange(5,100,1);                        // sets the range of the Brightness to be from a min of 5%, to a max of 100%, in steps of 1%
+    pixel=new WS2801_LED(dataPin, clockPin);    // creates WS2801 RGB LED on specified pins
+    this->nPixels=nPixels;                      // save number of Pixels in this LED Strand
+    
+    colors=(WS2801_LED::Color *)heap_caps_calloc(nPixels,sizeof(WS2801_LED::Color),MALLOC_CAP_DMA);
+    
+    update();                                   // manually call update() to set pixel with restored initial values
+  }
+
+  boolean update() override {
+
+    int p=power.getNewVal();
+    
+    float h=H.getNewVal<float>();       // range = [0,360]
+    float s=S.getNewVal<float>();       // range = [0,100]
+    float v=V.getNewVal<float>();       // range = [0,100]
+
+    for(int i=0;i<nPixels;i++)
+      colors[i].HSV(h*p, s*p, v*p);
+
+    pixel->set(colors,nPixels);         // sets nPixels to Colors stored in colors array
+          
+    return(true);  
+  }
+};
+
+///////////////////////////////
+
 void setup() {
   
   Serial.begin(115200);
+
+  ETH.begin(ETH_PHY_W5500, 1, F16, -1, -1, SPI2_HOST, SCK, MISO, MOSI);
  
   homeSpan.begin(Category::Lighting,"Pixel LEDS");
 
@@ -178,6 +224,8 @@ void setup() {
   SPAN_ACCESSORY("Dot RGB");
     new DotStar_RGB(DOTSTAR_DATA_PIN,DOTSTAR_CLOCK_PIN,30);     // create 30-LED DotStar RGB Strand displaying a spectrum of colors and using the current-limiting feature of DotStars to create flicker-free dimming
 
+  SPAN_ACCESSORY("WS2801 RGB");
+    new WS2801_RGB(WS2801_DATA_PIN,WS2801_CLOCK_PIN,25);        // create 25-LED WS2801 RGB Strand with full color control
 }
 
 ///////////////////////////////
