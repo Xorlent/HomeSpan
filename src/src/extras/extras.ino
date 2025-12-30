@@ -35,17 +35,17 @@ void setup() {
   delay(2000);
   Serial.printf("\n\nReady\n");
 
-  // WS2801_LED p1(F14, F22);
-  // WS2801_LED p2(F4, F21);
+  WS2801_LED p1(F14, F22);
+  WS2801_LED p2(F4, F21);
 
-  // while(1){
-  //   p1.set(p1.RGB(255,0,0),24);
-  //   p2.set(p2.RGB(0,255,0));
-  //   delay(1000);
-  //   p1.set(p1.RGB(0,255,0),24);
-  //   p2.set(p2.RGB(0,0,255));
-  //   delay(1000);
-  // }
+  while(1){
+    p1.set(p1.RGB(255,0,0),25);
+    p2.set(p2.RGB(0,255,0));
+    delay(1000);
+    p1.set(p1.RGB(0,0,0),25);
+    p2.set(p2.RGB(0,0,255));
+    delay(1000);
+  }
 
 }
 

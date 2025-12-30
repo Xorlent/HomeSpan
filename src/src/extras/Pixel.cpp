@@ -265,6 +265,7 @@ WS2801_LED::WS2801_LED(uint8_t dataPin, uint8_t clockPin, spi_host_device_t host
   devcfg.clock_speed_hz = 2 * 1000 * 1000;
   devcfg.spics_io_num = -1;
   devcfg.queue_size=1;
+  devcfg.flags|=SPI_DEVICE_HALFDUPLEX;
 
   if(spi_bus_get_attr(spiHost)==NULL)
     spi_bus_initialize(spiHost, &buscfg, SPI_DMA_CH_AUTO);
