@@ -174,7 +174,7 @@ struct WS2801_RGB : Service::LightBulb {      // Addressable two-wire RGB WS2801
   Characteristic::Brightness V{100,true};
   WS2801_LED *pixel;
   int nPixels;
-  
+
   WS2801_RGB(uint8_t dataPin, uint8_t clockPin, int nPixels) : Service::LightBulb(){
 
     V.setRange(5,100,1);                        // sets the range of the Brightness to be from a min of 5%, to a max of 100%, in steps of 1%

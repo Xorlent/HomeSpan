@@ -148,7 +148,7 @@ Pixel *Pixel::setTiming(float high0, float low0, float high1, float low1, uint32
 
 ///////////////////
 
-void Pixel::transmit(Color *c, size_t nPixels, boolean multiColor){
+void Pixel::transmit(const Color *c, size_t nPixels, boolean multiColor){
 
   if(channel<0 || nPixels==0)
     return;
@@ -202,7 +202,7 @@ Dot::Dot(uint8_t dataPin, uint8_t clockPin){
 
 ///////////////////
 
-void Dot::transmit(Color *c, size_t nPixels, boolean multiColor){
+void Dot::transmit(const Color *c, size_t nPixels, boolean multiColor){
   
   if(nPixels==0)
     return;
@@ -285,9 +285,9 @@ void WS2801_LED::setTiming(uint32_t freq){
 
 ///////////////////
 
-WS2801_LED::Color *WS2801_LED::getMem(size_t nPixels){
+WS2801_LED::Color *WS2801_LED::getMem(size_t nColors){
 
-  return((Color *)heap_caps_calloc(nPixels,sizeof(Color),MALLOC_CAP_DMA));
+  return((Color *)heap_caps_calloc(nColors,sizeof(Color),MALLOC_CAP_DMA));
 }
 
 ///////////////////
@@ -306,7 +306,7 @@ void WS2801_LED::set(Color c, size_t nPixels){
 
 ///////////////////
 
-void WS2801_LED::transmit(Color *c, size_t nPixels){
+void WS2801_LED::transmit(const Color *c, size_t nPixels){
   
   if(nPixels==0)
     return;
