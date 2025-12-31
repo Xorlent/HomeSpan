@@ -270,7 +270,7 @@ Of final note, *WS2801* devices have much slower refresh rates then *DotStar* de
   * sets the pixel transmission frequency to *freq* (in Hz)
   * example: `WS2801_LED p(8,11); p.setTiming(1000000); p.set(WS2801_LED::RGB(0,0,255),8);` changes the transmission frequency to 1MHz before setting the color of each pixel in an 8-pixel device to blue
 
-#### SPI Busses, Arrays, and Clock Frequency
+#### WS2801 Devices and SPI Busses - Technical Details (optional reading)
 
 *DotStar* and *WS2801* devices use nearly identical 2-wire protocols to represent and transmit pixel data.  However, whereas both devices utilize the same 3-byte format to control each pixel's 24-bit RGB color, *DotStar* devices also include a fourth byte to control each pixel's built-in 32-step drive current limiter (such control is not available on *WS2801* devices).  Importantly, since 32 steps can be represented using only 5 bits, this leaves *DotStar* devices with 3 extra bits in its fourth byte that it uses to encode whether any given 4-byte transmission should be interpreted by the device as a valid pixel color, or if the device should instead interpret it as a start-of-transmission indicator, which is used to reset the device's latching of transmitted data back to the first pixel in a strand.
 
@@ -284,17 +284,7 @@ ESP32-C3, ESP32-C5, and ESP32-C6 decvices have only 3 SPI bus controllers (SPI0-
 
 The **WS2801_LED** class has been designed to minimize any interference with the Arduino-ESP32 Core's global SPI object and it **should** be fine for your sketch to use the same SPI bus (either SPI2, or SPI3 if available) for any external SPI devices (such as an SPI-based Ethernet module) concurrently with the **WS2801_LED** class.
 
-As noted above, to ensure data transmission occurs completely in hardware without drawing upon the CPU, the data to be transmitted needs to be store in DMA-capable memory.  When transmitting a single Color to one or more pixels in a strand, the **WS2801_LED** class handles this automatically.  However, if you want to transmit an array of Colors, the array must be stored in DMA-capable memory.  The ESP32 operating system does not provide a method to guarantee that a local variables stored on the stack will be placed and properly aligned in DMA-capable memory, which means you **CANNOT** create a Color array like this `WS2801_LED::Color myColors[8];`.  Instead, you must first create a pointer to a Color array and then dynamically acquire memory from the heap using a special function that guarantees the memory returned will be DMA-capable.  To aid in this process the **WS2801_LED** class includes the following static "helper" function that performs the memory acquisition for you:
-
-* `WS2801_LED::Color *WS2801_LED::getMem(size_t nPixels)`
-  
-  * returns a pointer to a (zero-initialized) array of **WS2801_LED** Colors sized for *nPixels* elements
-  * when memory is no longer needed, use standard C++ `free()` call to return memory to the heap
-  * example:  `WS2801_LED::Color *colors = WS2801_LED::getMem(10); ... ; free(colors);` 
-
-Of final note, *WS2801* devices have a much slower refresh rate than *DotStar* devices. To ensure data is transmitted at the proper speed, the *WS2801_LED** class sets the SPI clock frequency to 2MHz when transmitting pixel data (this does not impact the clock frequency for any other SPI devices).  You may override this frequency for any **WS2801_LED** object using the following method:
-
-
+As noted above, to ensure data transmission occurs completely in hardware without drawing upon the CPU, the data to be transmitted needs to be stored in DMA-capable memory.   This is the purpose of static `getMem()` function - it returns a pointer to a dynamically-allocated 32-bit aligned DMA-capable segment of memory suitable for use with the SPI DMA hardware.
 
 ### Example Sketches
 
