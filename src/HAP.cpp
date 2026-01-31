@@ -171,7 +171,7 @@ void HAPClient::processRequest(){
   int cLen=0;                         // length of optional HTTP Content
 
   if((p=strstr(body,"Content-Length: "))){       // Content-Length is specified
-    if(sscanf(p+16, "%d", &cLen) != 1 || cLen < 0 || cLen > MAX_HTTP){       // Parsing succeeded, specified Content-Length is within limits
+    if(sscanf(p+16, "%d", &cLen) != 1 || cLen < 0 || cLen > MAX_HTTP){       // Verify parsing succeeded and specified Content-Length is within limits
       badRequestError();
       LOG0("\n*** ERROR: Invalid Content-Length\n\n");
       return;
