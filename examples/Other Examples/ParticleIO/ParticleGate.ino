@@ -287,13 +287,11 @@ void setup() {
 
   // Initialize Particle
   particle.init();
-
+  homeSpan.autoPoll();
 } // end of setup()
 
 //////////////////////////////////////
 
 void loop(){
-  
-  homeSpan.poll();
   
 } // end of loop()
