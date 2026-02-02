@@ -141,6 +141,7 @@ const int PARTICLE_THROTTLE_CACHE_SIZE = 10;    // Max unique endpoints to track
 ## Requirements
 
 - Arduino development environment set up according to HomeSpan documentation
+- Compatible ESP32 device
 - Particle.io account and device
 
 ## Example Particle Boron 404X Device Code
