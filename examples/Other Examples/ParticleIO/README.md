@@ -27,6 +27,7 @@ void setup() {
   // Create your accessories here
   
   particle.init();  // Register CLI commands and connection callback
+  homeSpan.autoPoll();  // Start threaded HomeSpan polling
 }
 ```
 
