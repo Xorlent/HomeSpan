@@ -4,7 +4,7 @@ This example demonstrates integration of Particle.io cloud services with HomeSpa
 
 ## Files
 
-- **ParticleGate.ino**: Main sketch demonstrating a gate opener
+- **ParticleIO.ino**: Main sketch demonstrating a gate opener
 - **Boron404X/ParticleGateBoron404X.ino**: Particle Boron 404X gate opener companion code
 - **Particle.h**: Particle header (place in the same folder as your .ino file)
 - **Particle.cpp**: Particle code (place in the same folder as your .ino file)
