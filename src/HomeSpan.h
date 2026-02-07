@@ -505,6 +505,9 @@ class Span{
 
   list<Controller, Mallocator<Controller>>::const_iterator controllerListBegin();
   list<Controller, Mallocator<Controller>>::const_iterator controllerListEnd();
+  
+  int getActiveConnections(){return(hapList.size());}                                    // returns number of active HAP client connections
+  TaskHandle_t getLoopTaskHandle(){return(loopTaskHandle);}                              // returns handle to Arduino loop task
 
   IPAddress getUniqueLocalIPv6(NetworkInterface &nif);
   IPAddress getUniqueLocalIPv6(WiFiSTAClass &wifi){return(getUniqueLocalIPv6(wifi.STA));} 

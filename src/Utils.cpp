@@ -130,6 +130,47 @@ const char *Utils::resetReason(){
   return "Unknown Reset Code";    
 }
 
+//////////////////////////////////////
+
+Utils::ResourceMonitor Utils::getSystemStatus(){
+  
+  ResourceMonitor status;
+  
+  // Get heap memory information
+  multi_heap_info_t heapInternal;
+  multi_heap_info_t heapPSRAM;
+  
+  heap_caps_get_info(&heapInternal, MALLOC_CAP_DEFAULT|MALLOC_CAP_INTERNAL);
+  heap_caps_get_info(&heapPSRAM, MALLOC_CAP_DEFAULT|MALLOC_CAP_SPIRAM);
+  
+  status.heapInternal.allocated = heapInternal.total_allocated_bytes;
+  status.heapInternal.free = heapInternal.total_free_bytes;
+  status.heapInternal.largestBlock = heapInternal.largest_free_block;
+  status.heapInternal.minFree = heapInternal.minimum_free_bytes;
+  
+  status.heapPSRAM.allocated = heapPSRAM.total_allocated_bytes;
+  status.heapPSRAM.free = heapPSRAM.total_free_bytes;
+  status.heapPSRAM.largestBlock = heapPSRAM.largest_free_block;
+  status.heapPSRAM.minFree = heapPSRAM.minimum_free_bytes;
+  
+  // Get the number of active socket connections
+  status.activeConnections = homeSpan.getActiveConnections();
+  
+  // Get minimum stack space since start of poll task (if it exists)
+  // In non-threaded mode (no autoPoll), returns -1
+  if(homeSpan.getAutoPollTask()){
+    status.pollTaskStack = uxTaskGetStackHighWaterMark(homeSpan.getAutoPollTask());
+  } else {
+    status.pollTaskStack = -1;  // task doesn't exist - non-threaded mode
+  }
+  
+  // Get minimum stack space since start of Arduino loop task
+  // This exists in both threaded and non-threaded modes
+  status.loopTaskStack = uxTaskGetStackHighWaterMark(homeSpan.getLoopTaskHandle());
+  
+  return status;
+}
+
 ////////////////////////////////
 //         PushButton         //
 ////////////////////////////////

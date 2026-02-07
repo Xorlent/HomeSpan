@@ -36,10 +36,31 @@
 
 namespace Utils {
 
+// Structure to hold system status information
+struct ResourceMonitor {
+  
+  // Heap memory information
+  struct HeapInfo {
+    size_t allocated;         // bytes allocated
+    size_t free;              // bytes free
+    size_t largestBlock;      // largest contiguous free block
+    size_t minFree;           // minimum free bytes since boot (low water mark)
+  };
+  
+  HeapInfo heapInternal;      // internal heap only
+  HeapInfo heapPSRAM;         // PSRAM only
+  
+  // Connection and stack information
+  int activeConnections;      // number of active socket connections
+  int pollTaskStack;          // stack high water mark for poll task (-1 if task doesn't exist)
+  int loopTaskStack;          // stack high water mark for loop task
+};
+
 char *readSerial(char *c, int max);   // read serial port into 'c' until <newline>, but storing only first 'max' characters (the rest are discarded)
 String mask(char *c, int n);          // simply utility that creates a String from 'c' with all except the first and last 'n' characters replaced by '*'
 char *stripBackslash(char *c);        // strips backslashes out of c (Apple unecessesarily "escapes" forward slashes in JSON)
 const char *resetReason();            // returns literal string description of esp_reset_reason()
+ResourceMonitor getSystemStatus();       // returns current system status (active connections and available stack)
 }
 
 /////////////////////////////////////////////////
