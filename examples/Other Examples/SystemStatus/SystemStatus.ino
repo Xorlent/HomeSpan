@@ -76,9 +76,10 @@ void loop() {
       status.heapPSRAM.largestBlock, status.heapPSRAM.minFree);
     Serial.println();
     Serial.printf("Active Socket Connections: %d\n", status.activeConnections);
-    Serial.printf("Poll Task Available Stack: %d bytes\n", status.pollTaskStack);
+    Serial.printf("AutoPoll Task Available Stack (-1 if not used): %d bytes\n", status.pollTaskStack);
     Serial.printf("Loop Task Available Stack: %d bytes\n", status.loopTaskStack);
     Serial.println("*********************\n");
   }
 
 }
+
