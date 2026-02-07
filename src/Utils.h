@@ -60,7 +60,7 @@ char *readSerial(char *c, int max);   // read serial port into 'c' until <newlin
 String mask(char *c, int n);          // simply utility that creates a String from 'c' with all except the first and last 'n' characters replaced by '*'
 char *stripBackslash(char *c);        // strips backslashes out of c (Apple unecessesarily "escapes" forward slashes in JSON)
 const char *resetReason();            // returns literal string description of esp_reset_reason()
-ResourceMonitor getSystemStatus();       // returns current system status (active connections and available stack)
+ResourceMonitor getSystemStatus();       // returns current system status (heap, active connections, and available stack)
 }
 
 /////////////////////////////////////////////////
